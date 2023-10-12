@@ -1,0 +1,23 @@
+me_caiu teste1
+bagulhetes a,b,c,d,e,f;
+	a aprochega 1;
+	b aprochega 2;
+	c aprochega a ** b;
+	
+	tche(d)
+	inicio_trovar [d]
+		bagual 1:
+			bah["UM"]
+		bagual 2:
+			bah["DOIS"]
+		bagual 3:
+			e aprochega tche(e)
+			f aprochega tche(f)
+			
+			inicio_quebra ([e] em_cima_do_laco [f])
+				bah["maior"]
+			molas
+				bah["menor"]
+			fim_quebra
+	fim_trovar
+os_butia_do_bolso
