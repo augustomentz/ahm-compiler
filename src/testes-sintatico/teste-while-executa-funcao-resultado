@@ -1,0 +1,116 @@
+Tokens reconhecidos: 
+
+T_ME_CAIU ( ME_CAIU )
+T_BAGULHETES ( BAGULHETES )
+T_ID ( A )
+T_VIRGULA ( , )
+T_ID ( B )
+T_VIRGULA ( , )
+T_ID ( C )
+T_PONTO_VIRGULA ( ; )
+T_ID ( A )
+T_APROCHEGA ( APROCHEGA )
+T_NUMERO ( 1 )
+T_PONTO_VIRGULA ( ; )
+T_ID ( B )
+T_APROCHEGA ( APROCHEGA )
+T_NUMERO ( 10 )
+T_PONTO_VIRGULA ( ; )
+T_TRAMPA_ATE ( TRAMPA_ATE )
+T_ABRE_PAR ( ( )
+T_ABRE_COL ( [ )
+T_ID ( A )
+T_FECHA_COL ( ] )
+T_BUCHA ( BUCHA )
+T_ABRE_COL ( [ )
+T_ID ( B )
+T_FECHA_COL ( ] )
+T_FECHA_PAR ( ) )
+T_ID ( A )
+T_APROCHEGA ( APROCHEGA )
+T_ID ( A )
+T_MAIS ( + )
+T_NUMERO ( 1 )
+T_PONTO_VIRGULA ( ; )
+T_ID ( C )
+T_APROCHEGA ( APROCHEGA )
+T_ID ( A )
+T_PONTO_VIRGULA ( ; )
+T_BAITA ( BAITA )
+T_ID ( TRIPLICA )
+T_ABRE_PAR ( ( )
+T_ID ( C )
+T_FECHA_PAR ( ) )
+T_FIM_TRAMPA_ATE ( FIM_TRAMPA_ATE )
+T_OS_BUTIA_DO_BOLSO ( OS_BUTIA_DO_BOLSO )
+T_FIM_FONTE (  )
+
+
+Regras reconhecidas: 
+
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<VARS> ::= <VAR> , <VARS> | <VAR>
+<LISTA_VARIAVEIS> ::= 'BAGULHETES' , <VARS> ';'
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<X> ::= [0-9]+('.'[0-9]+)
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<X> ::= [0-9]+('.'[0-9]+)
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<CONDICAO> ::= '[' <EXP> ']' 'BUCHA' '[' <EXP> ']'
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<X> ::= [0-9]+('.'[0-9]+)
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<PARAMETROS> ::= <E> | <PARAMETROS> ::= <E> ',' <E>
+<FUNCAO_EXECUTA_FUNCAO> ::= 'BAITA' <ID> '(' <PARAMETROS> ')'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
+<FUNCAO_ATE> ::= 'TRAMPA_ATE' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'FIM_TRAMPA_ATE'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
+<G> ::= 'ME_CAIU' <LISTA_VARIAVEIS> <LISTA_METODOS> 'OS_BUTIA_DO_BOLSO'
+<G>

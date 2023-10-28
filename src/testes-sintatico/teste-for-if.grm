@@ -1,0 +1,14 @@
+me_caiu
+	bagulhetes a,b, c;
+	a aprochega 1;
+	b aprochega 5;
+
+	inicio_peleia a aprochega 1 ate_levar 5 tunda
+		tche(a);
+		inicio_quebra ([e] bucha [f])
+			bah["1"]
+		molas
+			bah["0"]
+		fim_quebra
+	fim_peleia
+os_butia_do_bolso

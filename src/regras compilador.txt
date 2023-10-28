@@ -1,0 +1,2 @@
+a ultima funcao da lista de funcoes nao deve ter ; (para indicar o fim da lista de funções)
+o ultimo case na lista de cases nao deve ter . (para indicar o fim da lista de cases)

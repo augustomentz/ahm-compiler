@@ -1,0 +1,11 @@
+me_caiu
+	bagulhetes a,b,c;
+	a aprochega 1;
+	b aprochega 10;
+
+	trampa_ate ([a] bucha [b])
+		a aprochega a + 1;
+		c aprochega a;
+		baita triplica(c)
+	fim_trampa_ate
+os_butia_do_bolso
