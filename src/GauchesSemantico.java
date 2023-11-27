@@ -1,4 +1,8 @@
+import com.sun.org.apache.regexp.internal.RE;
+import com.sun.xml.internal.bind.v2.model.core.ID;
+
 import java.io.*;
+import java.util.HashMap;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -15,6 +19,7 @@ import javax.swing.filechooser.FileFilter;
  <VARS> ::= <VAR> , <VARS>
  <VARS> ::= <VAR>
  <VAR>  ::= <ID>
+ <VARIAVEL>  ::= <ID>
  <LISTA_FUNCOES> ::= <FUNCAO> ';' <LISTA_FUNCOES>
  <LISTA_FUNCOES> ::= <FUNCAO>
  <FUNCAO> ::= <FUNCAO_RECEBER>
@@ -27,12 +32,11 @@ import javax.swing.filechooser.FileFilter;
  <FUNCAO_IF> ::= 'INICIO_QUEBRA' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'FIM_QUEBRA'
  <FUNCAO_IF> ::= 'INICIO_QUEBRA' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'MOLAS' <LISTA_FUNCAO> 'FIM_QUEBRA'
  <FUNCAO_ATE> ::= 'TRAMPA_ATE' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'FIM_TRAMPA_ATE'
- <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
+ <FUNCAO_RECEBER> ::= <VARIAVEL> 'APROCHEGA' <EXP>
  <FUNCAO_ESCREVER> ::= 'BAH' '[' '"' <EXP> '"' ']'
- <FUNCAO_LER> ::= 'TCHE' '(' <VAR> ')'
- <FUNCAO_EXECUTA_FUNCAO> ::= 'BAITA' <ID> '(' <PARAMETROS> ')'
+ <FUNCAO_LER> ::= 'TCHE' '(' <VARIAVEL> ')'
  <FUNCAO_ESCOLHA> ::= 'INICIO_TROVAR' '[' <EXP> ']' <CASOS> 'FIM_TROVAR'
- <FUNCAO_PARA> ::= <FUNCAO_PARA> ::= 'INICIO_PELEIA' <VAR> 'APROCHEGA' <EXP> 'ATE_LEVAR' <EXP> 'TUNDA' <LISTA_FUNCOES> 'FIM_PELEIA'
+ <FUNCAO_PARA> ::= <FUNCAO_PARA> ::= 'INICIO_PELEIA' <VARIAVEL> 'APROCHEGA' <EXP> 'ATE_LEVAR' <EXP> 'TUNDA' <LISTA_FUNCOES> 'FIM_PELEIA'
  <CASOS> ::= <CASOS> '.' <CASOS>
  <CASOS> ::= <CASO>
  <CASO> ::= 'BAGUAL' <EXP> ':' <LISTA_FUNCOES>
@@ -42,8 +46,6 @@ import javax.swing.filechooser.FileFilter;
  <CONDICAO> ::= '[' <EXP> ']' 'EM_BAIXO_DO_LACO_OU_IGUAL' '[' <EXP> ']'
  <CONDICAO> ::= '[' <EXP> ']' 'EM_BAIXO_LACO' '[' <EXP> ']'
  <CONDICAO> ::= '[' <EXP> ']' 'BUCHA' '[' <EXP> ']'
- <PARAMETROS> ::= <E>
- <PARAMETROS> ::= <E> ',' <E>
  <EXP> ::= <EXP> + <T>
  <EXP> ::= <EXP> - <T>
  <EXP> ::= <T>
@@ -60,7 +62,7 @@ import javax.swing.filechooser.FileFilter;
  <ID> ::= [A-Z]+([A-Z]_[0-9])*
  */
 
-public class GauchesSintatico {
+public class GauchesSemantico {
 
     // Lista de tokens
     static final int T_ME_CAIU = 1;
@@ -75,8 +77,6 @@ public class GauchesSintatico {
     static final int T_APROCHEGA = 9;
 
     static final int T_BAH = 10;
-
-    static final int T_BAITA = 11;
 
     static final int T_INICIO_TROVAR = 12;
 
@@ -140,6 +140,8 @@ public class GauchesSintatico {
     static final int E_ERRO_LEXICO = 1;
     static final int E_ERRO_SINTATICO = 2;
 
+    static final int E_ERRO_SEMANTICO    =   3;
+
     static File arqFonte;
     static BufferedReader rdFonte;
     static File arqDestino;
@@ -154,11 +156,26 @@ public class GauchesSintatico {
     static String mensagemDeErro;
     static StringBuffer tokensIdentificados = new StringBuffer();
 
-    // Vars para o sintatico
+    // Vars sintatico
     static StringBuffer regrasReconhecidas = new StringBuffer();
     static int estadoCompilacao;
 
-    public static void main(String s[])  throws IOException, ErroLexicoException, ErroSintaticoException {
+    // Vars semantico
+    static String ultimoLexema;
+    static StringBuffer codigoGauchesco = new StringBuffer();
+    static int nivelIdentacao = 0; // para saber quantos espaços eu dou
+    static String exp_0;
+    static String exp_1;
+    static String exp_2;
+    static String exp_alvo;
+    static NodoPilhaSemantica nodo;
+    static NodoPilhaSemantica nodo_0;
+    static NodoPilhaSemantica nodo_1;
+    static NodoPilhaSemantica nodo_2;
+    static PilhaSemantica     pilhaSemantica = new PilhaSemantica();
+    static HashMap<String,Integer> tabelaSimbolos = new HashMap<String,Integer>();
+
+    public static void main(String s[])  throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         try {
             abreArquivo();
             abreDestino();
@@ -189,12 +206,14 @@ public class GauchesSintatico {
             JOptionPane.showMessageDialog( null, ele.getMessage(), "Erro Lexico Exception!", JOptionPane.ERROR_MESSAGE );
         } catch( ErroSintaticoException ese ) {
             JOptionPane.showMessageDialog( null, ese.getMessage(), "Erro Sint�tico Exception!", JOptionPane.ERROR_MESSAGE );
+        } catch( ErroSemanticoException esme ) {
+            JOptionPane.showMessageDialog( null, esme.getMessage(), "Erro Semantico Exception!", JOptionPane.ERROR_MESSAGE );
         } finally {
             System.out.println( "Execucao terminada!" );
         }
     }
 
-    static void analiseSintatica() throws IOException, ErroLexicoException, ErroSintaticoException {
+    static void analiseSintatica() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
 
         g();
 
@@ -202,6 +221,8 @@ public class GauchesSintatico {
             JOptionPane.showMessageDialog(null, mensagemDeErro, "Erro Lexico!", JOptionPane.ERROR_MESSAGE);
         } else if (estadoCompilacao == E_ERRO_SINTATICO) {
             JOptionPane.showMessageDialog(null, mensagemDeErro, "Erro Sintatico!", JOptionPane.ERROR_MESSAGE);
+        }  else if (estadoCompilacao == E_ERRO_SEMANTICO) {
+            JOptionPane.showMessageDialog( null, mensagemDeErro, "Erro Semantico!", JOptionPane.ERROR_MESSAGE );
         } else {
             JOptionPane.showMessageDialog(null, "Sintatico analisado e sem erros", "Analise Sintatica terminada!", JOptionPane.INFORMATION_MESSAGE);
             acumulaRegraSintaticaReconhecida("<G>");
@@ -209,13 +230,15 @@ public class GauchesSintatico {
     }
 
     // <G> ::= 'ME_CAIU' <LISTA_VARIAVEIS> <LISTA_METODOS> 'OS_BUTIA_DO_BOLSO'
-    private static void g() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void g() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         if (token == T_ME_CAIU) {
             buscaProximoToken();
+            regraSemantica(0);
             listaVariaveis();
             listaFuncoes();
             if (token == T_OS_BUTIA_DO_BOLSO) {
                 buscaProximoToken();
+                regraSemantica(1);
                 acumulaRegraSintaticaReconhecida("<G> ::= 'ME_CAIU' <LISTA_VARIAVEIS> <LISTA_METODOS> 'OS_BUTIA_DO_BOLSO'");
             } else {
                 registraErroSintatico("Erro Sintatico. Linha: " + linhaAtual + "\nColuna: " + colunaAtual + "\nErro: <" + linhaFonte + ">\n('os_butia_do_bolso') esperado, mas encontrei: " + lexema);
@@ -226,7 +249,7 @@ public class GauchesSintatico {
     }
 
     // <LISTA_VARIAVEIS> ::= 'BAGULHETES' , <VARS> ';'
-    private static void listaVariaveis() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void listaVariaveis() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         if (token == T_BAGULHETES) {
             buscaProximoToken();
             vars();
@@ -243,7 +266,7 @@ public class GauchesSintatico {
 
     // <VARS> ::= <VAR> , <VARS>
     // <VARS> ::= <VAR>
-    private static void vars() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void vars() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         var();
         while (token == T_VIRGULA) {
             buscaProximoToken();
@@ -253,9 +276,17 @@ public class GauchesSintatico {
     }
 
     // <VAR> ::= <ID>
-    private static void var() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void var() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         id();
+        regraSemantica(2);
         acumulaRegraSintaticaReconhecida("<VAR> ::= <ID>");
+    }
+
+    //<variavel> ::= <ID>
+    private static void variavel() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
+        id();
+        regraSemantica( 4 );
+        acumulaRegraSintaticaReconhecida( "<VARIAVEL> ::= <ID>" );
     }
 
     // <ID> ::= [A-Z]+([A-Z]_[0-9])*
@@ -270,7 +301,7 @@ public class GauchesSintatico {
 
     // <LISTA_FUNCOES> ::= <LISTA_FUNCOES> ; <FUNCAO>
     // <LISTA_FUNCOES> ::= <FUNCAO>
-    private static void listaFuncoes() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void listaFuncoes() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         funcao();
         while (token == T_PONTO_VIRGULA) {
             buscaProximoToken();
@@ -285,8 +316,7 @@ public class GauchesSintatico {
     // <FUNCAO> ::= <FUNCAO_IF>
     // <FUNCAO> ::= <FUNCAO_ATE>
     // <FUNCAO> ::= <FUNCAO_ESCOLHA>
-    // <FUNCAO> ::= <FUNCAO_EXECUTA_FUNCAO>
-    private static void funcao() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void funcao() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         switch (token) {
             case T_INICIO_QUEBRA:
                 funcaoIf();
@@ -303,9 +333,6 @@ public class GauchesSintatico {
             case T_TCHE:
                 funcaoLer();
                 break;
-            case T_BAITA:
-                funcaoExecutaFuncao();
-                break;
             case T_INICIO_TROVAR:
                 funcaoEscolha();
                 break;
@@ -320,47 +347,16 @@ public class GauchesSintatico {
         );
     }
 
-    // <FUNCAO_EXECUTA_FUNCAO> ::= 'BAITA' <ID> '(' <PARAMETROS> ')'
-    private static void funcaoExecutaFuncao() throws IOException, ErroLexicoException, ErroSintaticoException {
-        if (token == T_BAITA) {
-            buscaProximoToken();
-            id();
-            if (token == T_ABRE_PAR) {
-                buscaProximoToken();
-                parametros();
-                if (token == T_FECHA_PAR) {
-                    buscaProximoToken();
-                    acumulaRegraSintaticaReconhecida("<FUNCAO_EXECUTA_FUNCAO> ::= 'BAITA' <ID> '(' <PARAMETROS> ')'");
-                }
-            } else {
-                registraErroSintatico("Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n'(' esperado mas encontrei: " + lexema);
-            }
-        } else {
-            registraErroSintatico("Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n'baita' esperado mas encontrei: " + lexema);
-        }
-    }
-
-    // <PARAMETROS> ::= <E>
-    // <PARAMETROS> ::= <E> ',' <E>
-    private static void parametros() throws IOException, ErroLexicoException, ErroSintaticoException {
-        exp();
-        while (token == T_VIRGULA) {
-            buscaProximoToken();
-            exp();
-        }
-
-        acumulaRegraSintaticaReconhecida( "<PARAMETROS> ::= <E> | <PARAMETROS> ::= <E> ',' <E>");
-    }
-
     // <FUNCAO_LER> ::= 'TCHE' '(' <VAR> ')'
-    private static void funcaoLer() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void funcaoLer() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         if (token == T_TCHE)  {
             buscaProximoToken();
             if (token == T_ABRE_PAR) {
                 buscaProximoToken();
-                var();
+                variavel();
                 if (token == T_FECHA_PAR) {
                     buscaProximoToken();
+                    regraSemantica(27);
                     acumulaRegraSintaticaReconhecida("<FUNCAO_LER> ::= 'TCHE' '(' <VAR> ')'");
                 }
             } else {
@@ -372,15 +368,17 @@ public class GauchesSintatico {
     }
 
     // <FUNCAO_ATE> ::= 'TRAMPA_ATE' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'FIM_TRAMPA_ATE'
-    private static void funcaoAte() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void funcaoAte() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         if (token == T_TRAMPA_ATE) {
             buscaProximoToken();
             if (token == T_ABRE_PAR) {
                 buscaProximoToken();
                 condicao();
+                regraSemantica(25);
                 if (token == T_FECHA_PAR) {
                     buscaProximoToken();
                     listaFuncoes();
+                    regraSemantica(14);
                     if (token == T_FIM_TRAMPA_ATE) {
                         buscaProximoToken();
                         acumulaRegraSintaticaReconhecida("<FUNCAO_ATE> ::= 'TRAMPA_ATE' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'FIM_TRAMPA_ATE'");
@@ -398,18 +396,22 @@ public class GauchesSintatico {
 
     // <FUNCAO_IF> ::= 'INICIO_QUEBRA' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'FIM_QUEBRA'
     // <FUNCAO_IF> ::= 'INICIO_QUEBRA' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'MOLAS' <LISTA_FUNCAO> 'FIM_QUEBRA'
-    private static void funcaoIf() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void funcaoIf() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         if (token == T_INICIO_QUEBRA) {
             buscaProximoToken();
             if (token == T_ABRE_PAR) {
                 buscaProximoToken();
                 condicao();
+                regraSemantica(17);
                 if (token == T_FECHA_PAR) {
                     buscaProximoToken();
                     listaFuncoes();
+                    regraSemantica(14);
                     if (token == T_MOLAS) {
+                        regraSemantica(18);
                         buscaProximoToken();
                         listaFuncoes();
+                        regraSemantica(16);
                     }
                     if (token == T_FIM_QUEBRA) {
                         buscaProximoToken();
@@ -434,19 +436,19 @@ public class GauchesSintatico {
     // <CONDICAO> ::= '[' <EXP> ']' 'EM_BAIXO_DO_LACO_OU_IGUAL' '[' <EXP> ']'
     // <CONDICAO> ::= '[' <EXP> ']' 'EM_BAIXO_LACO' '[' <EXP> ']'
     // <CONDICAO> ::= '[' <EXP> ']' 'BUCHA' '[' <EXP> ']'
-    private static void condicao() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void condicao() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         if (token == T_ABRE_COL) {
             buscaProximoToken();
             exp();
             if (token == T_FECHA_COL) {
                 buscaProximoToken();
-
                 switch (token) {
                     case T_ECL: {
                         buscaProximoToken();
                         if (token == T_ABRE_COL) {
                             buscaProximoToken();
                             exp();
+                            regraSemantica(19);
                             if (token == T_FECHA_COL) {
                                 buscaProximoToken();
                                 acumulaRegraSintaticaReconhecida("<CONDICAO> ::= '[' <EXP> ']' 'EM_CIMA_DO_LACO' '[' <EXP> ']'");
@@ -463,6 +465,7 @@ public class GauchesSintatico {
                         if (token == T_ABRE_COL) {
                             buscaProximoToken();
                             exp();
+                            regraSemantica(21);
                             if (token == T_FECHA_COL) {
                                 buscaProximoToken();
                                 acumulaRegraSintaticaReconhecida("<CONDICAO> ::= '[' <EXP> ']' 'EM_CIMA_DO_LACO_OU_IGUAL' '[' <EXP> ']'");
@@ -479,6 +482,7 @@ public class GauchesSintatico {
                         if (token == T_ABRE_COL) {
                             buscaProximoToken();
                             exp();
+                            regraSemantica(24);
                             if (token == T_FECHA_COL) {
                                 buscaProximoToken();
                                 acumulaRegraSintaticaReconhecida("<CONDICAO> ::= '[' <EXP> ']' 'BEM_CAPAZ' '[' <EXP> ']'");
@@ -495,6 +499,7 @@ public class GauchesSintatico {
                         if (token == T_ABRE_COL) {
                             buscaProximoToken();
                             exp();
+                            regraSemantica(20);
                             if (token == T_FECHA_COL) {
                                 buscaProximoToken();
                                 acumulaRegraSintaticaReconhecida("<CONDICAO> ::= '[' <EXP> ']' 'EM_BAIXO_LACO' '[' <EXP> ']'");
@@ -511,6 +516,7 @@ public class GauchesSintatico {
                         if (token == T_ABRE_COL) {
                             buscaProximoToken();
                             exp();
+                            regraSemantica(22);
                             if (token == T_FECHA_COL) {
                                 buscaProximoToken();
                                 acumulaRegraSintaticaReconhecida("<CONDICAO> ::= '[' <EXP> ']' 'EM_BAIXO_DO_LACO_OU_IGUAL' '[' <EXP> ']'");
@@ -527,6 +533,7 @@ public class GauchesSintatico {
                         if (token == T_ABRE_COL) {
                             buscaProximoToken();
                             exp();
+                            regraSemantica(23);
                             if (token == T_FECHA_COL) {
                                 buscaProximoToken();
                                 acumulaRegraSintaticaReconhecida("<CONDICAO> ::= '[' <EXP> ']' 'BUCHA' '[' <EXP> ']'");
@@ -550,11 +557,12 @@ public class GauchesSintatico {
     }
 
     // <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
-    private static void funcaoReceber() throws IOException, ErroLexicoException, ErroSintaticoException {
-        var();
+    private static void funcaoReceber() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
+        variavel();
         if (token == T_APROCHEGA) {
             buscaProximoToken();
             exp();
+            regraSemantica(3);
             acumulaRegraSintaticaReconhecida("<FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>");
         } else {
             registraErroSintatico("Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n'>>' esperado mas encontrei: " + lexema);
@@ -562,7 +570,7 @@ public class GauchesSintatico {
     }
 
     // <FUNCAO_ESCREVER> ::= 'BAH' '[' '"' <EXP> '"' ']'
-    private static void funcaoEscrever() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void funcaoEscrever() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         if ( token == T_BAH ) {
             buscaProximoToken();
             if ( token == T_ABRE_COL ) {
@@ -574,6 +582,7 @@ public class GauchesSintatico {
                         buscaProximoToken();
                         if (token == T_FECHA_COL) {
                             buscaProximoToken();
+                            regraSemantica(26);
                             acumulaRegraSintaticaReconhecida("<FUNCAO_ESCREVER> ::= 'BAH' '[' '" + "' <EXP> '' ']'");
                         }
                     } else {
@@ -591,21 +600,23 @@ public class GauchesSintatico {
     }
 
     // <FUNCAO_PARA> ::= 'INICIO_PELEIA' <VAR> 'APROCHEGA' <EXP> 'ATE_LEVAR' <EXP> 'UMA_TUNDA' <LISTA_FUNCOES> 'FIM_PELEIA'
-    private static void funcaoPara() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void funcaoPara() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         if (token == T_INICIO_PELEIA) {
             buscaProximoToken();
-            var();
+            variavel();
             if (token == T_APROCHEGA) {
                 buscaProximoToken();
                 exp();
                 if (token == T_ATE_LEVAR) {
                     buscaProximoToken();
                     exp();
+                    regraSemantica(28);
                     if (token == T_TUNDA) {
                         buscaProximoToken();
                         listaFuncoes();
                         if (token == T_FIM_PELEIA) {
                             buscaProximoToken();
+                            regraSemantica(16);
                             acumulaRegraSintaticaReconhecida("<FUNCAO_PARA> ::= 'INICIO_PELEIA' <VAR> 'APROCHEGA' <EXP> 'ATE_LEVAR' <EXP> 'TUNDA' <LISTA_FUNCOES> 'FIM_PELEIA'");
                         } else {
                             registraErroSintatico("Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n'fim_peleia' esperado mas encontrei: " + lexema);
@@ -625,27 +636,38 @@ public class GauchesSintatico {
     }
 
      // <FUNCAO_ESCOLHA> ::= 'INICIO_TROVAR' '[' <EXP> ']' <CASOS> 'FIM_TROVAR'
-     private static void funcaoEscolha() throws IOException, ErroLexicoException, ErroSintaticoException {
+     private static void funcaoEscolha() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
          if (token == T_INICIO_TROVAR) {
              buscaProximoToken();
              if (token == T_ABRE_COL) {
                  buscaProximoToken();
                  exp();
+                 regraSemantica(30);
                  if (token == T_FECHA_COL) {
                      buscaProximoToken();
                      casos();
                      if (token == T_FIM_TROVAR) {
+                         regraSemantica(32);
+                         regraSemantica(16);
                          buscaProximoToken();
                          acumulaRegraSintaticaReconhecida("<FUNCAO_ESCOLHA> ::= 'INICIO_TROVAR' '[' <EXP> ']' <CASOS> 'FIM_TROVAR'");
+                     } else {
+                         registraErroSintatico( "Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n'fim_trovar' esperado mas encontrei: " + lexema );
                      }
+                 } else {
+                     registraErroSintatico( "Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n']' esperado mas encontrei: " + lexema );
                  }
+             } else {
+                 registraErroSintatico( "Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n'[' esperado mas encontrei: " + lexema );
              }
+         } else {
+             registraErroSintatico( "Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n'inicio_trovar' esperado mas encontrei: " + lexema );
          }
      }
 
      // <CASOS> ::= <CASOS> '.' <CASOS>
      // <CASOS> ::= <CASO>
-     private static void casos() throws IOException, ErroLexicoException, ErroSintaticoException {
+     private static void casos() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         caso();
         while(token == T_PONTO) {
             buscaProximoToken();
@@ -656,26 +678,43 @@ public class GauchesSintatico {
 
 
      // <CASO> ::= 'BAGUAL' <EXP> ':' <LISTA_FUNCOES>
-    private static void caso() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void caso() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         if (token == T_BAGUAL) {
             buscaProximoToken();
             exp();
+            regraSemantica(31);
             if (token == T_DOIS_PONTOS) {
                 buscaProximoToken();
                 listaFuncoes();
                 acumulaRegraSintaticaReconhecida("<CASO> ::= 'BAGUAL' <EXP> ':' <LISTA_FUNCOES>");
+            } else {
+                registraErroSintatico( "Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n':' esperado mas encontrei: " + lexema );
             }
+        } else {
+            registraErroSintatico( "Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n'bagual' esperado mas encontrei: " + lexema );
         }
     }
 
     // <EXP> ::= <EXP> + <T>
     // <EXP> ::= <EXP> - <T>
     // <EXP> ::= <T>
-    private static void exp() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void exp() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         t();
         while ((token == T_MAIS) || (token == T_MENOS)) {
-            buscaProximoToken();
-            t();
+            switch (token) {
+                case T_MAIS: {
+                    buscaProximoToken();
+                    t();
+                    regraSemantica(5);
+                }
+                break;
+                case T_MENOS: {
+                    buscaProximoToken();
+                    t();
+                    regraSemantica(6);
+                }
+                break;
+            }
         }
         acumulaRegraSintaticaReconhecida(
             "<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>"
@@ -686,11 +725,29 @@ public class GauchesSintatico {
     // <T> ::= <T> / <F>
     // <T> ::= <T> % <F>
     // <T> ::= <F>
-    private static void t() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void t() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         f();
         while ( (token == T_VEZES) || (token == T_DIVIDIDO) || (token == T_RESTO) ) {
-            buscaProximoToken();
-            f();
+            switch (token) {
+                case T_VEZES: {
+                    buscaProximoToken();
+                    f();
+                    regraSemantica(7);
+                }
+                break;
+                case T_DIVIDIDO: {
+                    buscaProximoToken();
+                    f();
+                    regraSemantica(8);
+                }
+                break;
+                case T_RESTO: {
+                    buscaProximoToken();
+                    f();
+                    regraSemantica(9);
+                }
+                break;
+            }
         }
         acumulaRegraSintaticaReconhecida(
             "<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>"
@@ -700,7 +757,7 @@ public class GauchesSintatico {
     // <F> ::= -<F>
     // <F> ::= <X> ** <F>
     // <F> ::= <X>
-    private static void f() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void f() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         if ( token == T_MENOS ) {
             buscaProximoToken();
             f();
@@ -709,6 +766,7 @@ public class GauchesSintatico {
             while ( token == T_ELEVADO ) {
                 buscaProximoToken();
                 x();
+                regraSemantica(10);
             }
         }
         acumulaRegraSintaticaReconhecida(
@@ -720,10 +778,10 @@ public class GauchesSintatico {
     // <X> ::= '(' '[' <EXP> ']' ')'
     // <X> ::= [0-9]+('.'[0-9]+)
     // <X> ::= <VAR>
-    private static void x() throws IOException, ErroLexicoException, ErroSintaticoException {
+    private static void x() throws IOException, ErroLexicoException, ErroSintaticoException, ErroSemanticoException {
         switch ( token ) {
-            case T_ID: buscaProximoToken(); acumulaRegraSintaticaReconhecida( "<X> ::= <VAR>" ); break;
-            case T_NUMERO: buscaProximoToken(); acumulaRegraSintaticaReconhecida( "<X> ::= [0-9]+('.'[0-9]+)" ); break;
+            case T_ID: buscaProximoToken(); acumulaRegraSintaticaReconhecida( "<X> ::= <VAR>" ); regraSemantica(11); break;
+            case T_NUMERO: buscaProximoToken(); acumulaRegraSintaticaReconhecida( "<X> ::= [0-9]+('.'[0-9]+)" ); regraSemantica(12); break;
             case T_ABRE_PAR: {
                 buscaProximoToken();
                 if (token == T_ABRE_COL) {
@@ -736,6 +794,7 @@ public class GauchesSintatico {
 
                             acumulaRegraSintaticaReconhecida("<X> ::= '(' '[' <EXP> ']' ')'");
                         }
+                        regraSemantica(13);
                     } else {
                         registraErroSintatico( "Erro Sintatico na linha: " + linhaAtual + "\nReconhecido ao atingir a coluna: " + colunaAtual + "\nLinha do Erro: <" + linhaFonte + ">\n']' esperado mas encontrei: " + lexema );
                     }
@@ -779,6 +838,10 @@ public class GauchesSintatico {
     static void buscaProximoToken() throws IOException
     {
         //int i, j;
+        if ( lexema != null ) {
+            ultimoLexema = new String( lexema );
+        }
+
         StringBuffer sbLexema = new StringBuffer( "" );
 
         // Salto espa�oes enters e tabs at� o inicio do proximo token
@@ -833,8 +896,6 @@ public class GauchesSintatico {
                 token = T_BAH;
             else if ( lexema.equals( "TCHE" ) )
                 token = T_TCHE;
-            else if ( lexema.equals( "BAITA" ) )
-                token = T_BAITA;
             else if ( lexema.equals( "INICIO_TROVAR" ) )
                 token = T_INICIO_TROVAR;
             else if ( lexema.equals( "FIM_TROVAR" ) )
@@ -964,7 +1025,6 @@ public class GauchesSintatico {
             case T_FIM_QUEBRA    : tokenLexema.append( "T_FIM_QUEBRA" ); break;
             case T_APROCHEGA    : tokenLexema.append( "T_APROCHEGA" ); break;
             case T_BAH    : tokenLexema.append( "T_BAH" ); break;
-            case T_BAITA            : tokenLexema.append( "T_BAITA" ); break;
             case T_INICIO_TROVAR            : tokenLexema.append( "T_INICIO_TROVAR" ); break;
             case T_FIM_TROVAR             : tokenLexema.append( "T_FIM_TROVAR" ); break;
             case T_BAGUAL        : tokenLexema.append( "T_BAGUAL" ); break;
@@ -1077,6 +1137,8 @@ public class GauchesSintatico {
                 BufferedWriter bfw = new BufferedWriter( fw );
                 bfw.write( tokensIdentificados.toString() );
                 bfw.write(regrasReconhecidas.toString());
+                bfw.write( "\n" );
+                bfw.write(codigoGauchesco.toString());
                 bfw.close();
                 JOptionPane.showMessageDialog( null, "Arquivo Salvo: " + arqDestino, "Salvando Arquivo", JOptionPane.INFORMATION_MESSAGE );
             } catch (IOException e) {
@@ -1122,6 +1184,207 @@ public class GauchesSintatico {
             mensagemDeErro = msg;
         }
         throw new ErroSintaticoException( msg );
+    }
+
+    static void registraErroSemantico( String msg ) {
+
+        if ( estadoCompilacao == E_SEM_ERROS ) {
+            estadoCompilacao = E_ERRO_SEMANTICO;
+            mensagemDeErro = msg;
+        }
+    }
+
+    static void regraSemantica( int numeroRegra ) throws ErroSemanticoException {
+        System.out.println( "Regra Semantica " + numeroRegra );
+        switch ( numeroRegra ) {
+            case 0:    // inicio
+                codigoGauchesco.append("meCaiu {\n");
+                nivelIdentacao++;
+                break;
+            case 1: // fim
+                codigoGauchesco.append(tabulacao(nivelIdentacao));
+                codigoGauchesco.append("\n} os butia do bolso ()\n\n");
+                break;
+            case 2: // var
+                insereNaTabelaSimbolos(ultimoLexema);
+                break;
+            case 3: // atribuir
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                codigoGauchesco.append(tabulacao(nivelIdentacao));
+                codigoGauchesco.append(nodo_1.getCodigoMinusculo() + " aprochega " + nodo_2.getCodigoMinusculo() + ";\n");
+                break;
+            case  4: // variavel
+                if ( VeSeExisteNaTabelaSimbolos( ultimoLexema ) ) {
+                    pilhaSemantica.push( ultimoLexema, 4 );
+                }
+                break;
+            case  5: // MAIS
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( nodo_1.getCodigoMinusculo() + " + " + nodo_2.getCodigoMinusculo(), 5 );
+                break;
+            case  6:  // MENOS
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( nodo_1.getCodigoMinusculo() + " - " + nodo_2.getCodigoMinusculo(), 6 );
+                break;
+            case  7:    // VEZES
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( nodo_1.getCodigoMinusculo() + " * " + nodo_2.getCodigoMinusculo(), 7 );
+                break;
+            case  8:    // DIVIDO
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( nodo_1.getCodigoMinusculo() + " / " + nodo_2.getCodigoMinusculo(), 8 );
+                break;
+            case  9:    // RESTO
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( nodo_1.getCodigoMinusculo() + " % " + nodo_2.getCodigoMinusculo(), 9 );
+                break;
+            case 10:    // ELEVADO
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( nodo_1.getCodigoMinusculo() + " ** " + nodo_2.getCodigoMinusculo(), 10 );
+                break;
+            case 11:	// UNIQUE_IDENTIFIER
+                if ( VeSeExisteNaTabelaSimbolos( ultimoLexema ) ) {
+                    pilhaSemantica.push( ultimoLexema, 11 );
+                }
+                break;
+            case 12:	// NUMERO
+                pilhaSemantica.push( ultimoLexema, 12 );
+                break;
+            case 13:	// ABRE E FECHA PAR
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( "(" + nodo_1.getCodigoMinusculo() + ")" , 13 );
+                break;
+            case 14:    // FECHA PAR OU COL E CHAVE
+                nivelIdentacao--;
+                codigoGauchesco.append( tabulacao( nivelIdentacao ) );
+                codigoGauchesco.append( "}" );
+                break;
+            case 15:	// ABRE E FECHA COLCHETE
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( "[" + nodo_1.getCodigoMinusculo() + "]" , 15 );
+                break;
+            case 16:    // FECHA PAR E CHAVE + QUEBRA LINHA
+                nivelIdentacao--;
+                codigoGauchesco.append( tabulacao( nivelIdentacao ) );
+                codigoGauchesco.append( "}\n" );
+                break;
+            case 17:    // if
+                nodo_1 = pilhaSemantica.pop();
+                codigoGauchesco.append( tabulacao( nivelIdentacao ) );
+                codigoGauchesco.append( "quebra(" + nodo_1.getCodigoMinusculo() + ") {\n" );
+                nivelIdentacao++;
+                break;
+            case 18:    // else
+                codigoGauchesco.append( " molas {\n" );
+                nivelIdentacao++;
+                break;
+            case 19:    // MAIOR
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( "["+ nodo_1.getCodigoMinusculo() + "] em cima do laço [" + nodo_2.getCodigoMinusculo() + "]", 19 );
+                break;
+            case 20:    // MENOR
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push("[" + nodo_1.getCodigoMinusculo() + "] embaixo do laço [" + nodo_2.getCodigoMinusculo() + "]", 20 );
+                break;
+            case 21:    // MAIOR_IGUAL
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( "[" +nodo_1.getCodigoMinusculo() + "] em cima do laço ou igual [" + nodo_2.getCodigoMinusculo() + "]", 21 );
+                break;
+            case 22:    // MENOR_IGUAL
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( "[" + nodo_1.getCodigoMinusculo() + "] embaixo do laço ou igual [" + nodo_2.getCodigoMinusculo() + "]", 22 );
+                break;
+            case 23:    // IGUAL
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( "[" + nodo_1.getCodigoMinusculo() + "] bucha [" + nodo_2.getCodigoMinusculo() + "]", 23 );
+                break;
+            case 24:    // DIFERENTE
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                pilhaSemantica.push( "[" + nodo_1.getCodigoMinusculo() + "] bem capaz [" + nodo_2.getCodigoMinusculo() + "]", 24 );
+                break;
+            case 25:    // TRAMPA
+                nodo_1 = pilhaSemantica.pop();
+                codigoGauchesco.append( tabulacao( nivelIdentacao ) );
+                codigoGauchesco.append( "trampa ate(" + nodo_1.getCodigoMinusculo() + ") {\n" );
+                nivelIdentacao++;
+                break;
+            case 26:    // escrever
+                nodo_1 = pilhaSemantica.pop();
+                codigoGauchesco.append( tabulacao( nivelIdentacao ) );
+                codigoGauchesco.append( "bah['" + nodo_1.getCodigoMinusculo() + "'];\n" );
+                break;
+            case 27:    // ler
+                nodo_1 = pilhaSemantica.pop();
+                codigoGauchesco.append( tabulacao( nivelIdentacao ) );
+                codigoGauchesco.append( "tche(" + nodo_1.getCodigoMinusculo() + ");\n" );
+                break;
+            case 28:
+                nodo_2 = pilhaSemantica.pop();
+                nodo_1 = pilhaSemantica.pop();
+                nodo_0 = pilhaSemantica.pop();
+                codigoGauchesco.append( tabulacao( nivelIdentacao ) );
+                codigoGauchesco.append( "peleia(" + nodo_0.getCodigoMinusculo() + " aprochega " + nodo_1.getCodigoMinusculo() + " ate levar " + nodo_2.getCodigoMinusculo() + " tunda) {\n" );
+                nivelIdentacao++;
+                break;
+            case 30:    // escolha
+                nodo_1 = pilhaSemantica.pop();
+                codigoGauchesco.append( tabulacao( nivelIdentacao ) );
+                codigoGauchesco.append( "trovar[" + nodo_1.getCodigoMinusculo() + "] {\n");
+                nivelIdentacao++;
+                nivelIdentacao++;
+                break;
+            case 31:    // case
+                nodo_1 = pilhaSemantica.pop();
+                nivelIdentacao--;
+                codigoGauchesco.append( tabulacao( nivelIdentacao ) );
+                codigoGauchesco.append( "bagual " + nodo_1.getCodigoMinusculo() + ":\n" );
+                nivelIdentacao++;
+                break;
+            case 32:
+                nivelIdentacao--;
+                break;
+        }
+    }
+
+    private static int buscaTipoNaTabelaSimbolos(String ultimoLexema ) throws ErroSemanticoException {
+        return tabelaSimbolos.get( ultimoLexema );
+    }
+
+    private static boolean VeSeExisteNaTabelaSimbolos(String ultimoLexema ) throws ErroSemanticoException {
+        if ( !tabelaSimbolos.containsKey( ultimoLexema ) ) {
+            throw new ErroSemanticoException( "Variavel " + ultimoLexema + " nao esta declarada! linha: " + linhaAtual );
+        } else {
+            return true;
+        }
+    }
+
+    private static void insereNaTabelaSimbolos(String ultimoLexema) throws ErroSemanticoException {
+        if ( tabelaSimbolos.containsKey( ultimoLexema ) ) {
+            throw new ErroSemanticoException( "Variavel " + ultimoLexema + " ja declarada! linha: " + linhaAtual );
+        } else {
+            tabelaSimbolos.put( ultimoLexema, 0 );
+        }
+    }
+
+    static String tabulacao( int qtd ) {
+        StringBuffer sb = new StringBuffer();
+        for ( int i=0; i<qtd; i++ ) {
+            sb.append( "    " );
+        }
+        return sb.toString();
     }
 }
 

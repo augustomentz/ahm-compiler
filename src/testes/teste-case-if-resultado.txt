@@ -44,7 +44,7 @@ T_DOIS_PONTOS ( : )
 T_BAH ( BAH )
 T_ABRE_COL ( [ )
 T_ASPAS_DUPLAS ( " )
-T_ID ( UM )
+T_ID ( A )
 T_ASPAS_DUPLAS ( " )
 T_FECHA_COL ( ] )
 N/A ( . )
@@ -54,7 +54,7 @@ T_DOIS_PONTOS ( : )
 T_BAH ( BAH )
 T_ABRE_COL ( [ )
 T_ASPAS_DUPLAS ( " )
-T_ID ( DOIS )
+T_ID ( B )
 T_ASPAS_DUPLAS ( " )
 T_FECHA_COL ( ] )
 N/A ( . )
@@ -63,9 +63,9 @@ T_NUMERO ( 3 )
 T_DOIS_PONTOS ( : )
 T_ID ( E )
 T_APROCHEGA ( APROCHEGA )
-T_ID ( E )
+T_ID ( A )
 T_VEZES ( * )
-T_ID ( C )
+T_ID ( B )
 T_PONTO_VIRGULA ( ; )
 T_ID ( F )
 T_APROCHEGA ( APROCHEGA )
@@ -86,14 +86,14 @@ T_FECHA_PAR ( ) )
 T_BAH ( BAH )
 T_ABRE_COL ( [ )
 T_ASPAS_DUPLAS ( " )
-T_ID ( MAIOR )
+T_ID ( C )
 T_ASPAS_DUPLAS ( " )
 T_FECHA_COL ( ] )
 T_MOLAS ( MOLAS )
 T_BAH ( BAH )
 T_ABRE_COL ( [ )
 T_ASPAS_DUPLAS ( " )
-T_ID ( MENOR )
+T_ID ( D )
 T_ASPAS_DUPLAS ( " )
 T_FECHA_COL ( ] )
 T_FIM_QUEBRA ( FIM_QUEBRA )
@@ -109,7 +109,7 @@ T_FIM_TROVAR ( FIM_TROVAR )
 T_PONTO_VIRGULA ( ; )
 T_TCHE ( TCHE )
 T_ABRE_PAR ( ( )
-T_ID ( F )
+T_ID ( D )
 T_FECHA_PAR ( ) )
 T_OS_BUTIA_DO_BOLSO ( OS_BUTIA_DO_BOLSO )
 T_FIM_FONTE (  )
@@ -132,7 +132,7 @@ Regras reconhecidas:
 <VARS> ::= <VAR> , <VARS> | <VAR>
 <LISTA_VARIAVEIS> ::= 'BAGULHETES' , <VARS> ';'
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= [0-9]+('.'[0-9]+)
 <F> ::= -<X> | <X> ** <F> | <X>
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
@@ -140,7 +140,7 @@ Regras reconhecidas:
 <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= [0-9]+('.'[0-9]+)
 <F> ::= -<X> | <X> ** <F> | <X>
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
@@ -148,7 +148,7 @@ Regras reconhecidas:
 <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= <VAR>
 <X> ::= <VAR>
 <F> ::= -<X> | <X> ** <F> | <X>
@@ -157,7 +157,7 @@ Regras reconhecidas:
 <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= <VAR>
 <F> ::= -<X> | <X> ** <F> | <X>
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
@@ -200,7 +200,7 @@ Regras reconhecidas:
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
 <EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= <VAR>
 <F> ::= -<X> | <X> ** <F> | <X>
 <X> ::= <VAR>
@@ -210,7 +210,7 @@ Regras reconhecidas:
 <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= <VAR>
 <X> ::= <VAR>
 <F> ::= -<X> | <X> ** <F> | <X>
@@ -250,7 +250,7 @@ Regras reconhecidas:
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
 <EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <FUNCAO_LER> ::= 'TCHE' '(' <VAR> ')'
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
@@ -259,9 +259,35 @@ Regras reconhecidas:
 <FUNCAO_ESCOLHA> ::= 'INICIO_TROVAR' '[' <EXP> ']' <CASOS> 'FIM_TROVAR'
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <FUNCAO_LER> ::= 'TCHE' '(' <VAR> ')'
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
 <G> ::= 'ME_CAIU' <LISTA_VARIAVEIS> <LISTA_METODOS> 'OS_BUTIA_DO_BOLSO'
 <G>
+
+meCaiu {
+    a aprochega 1;
+    b aprochega 2;
+    c aprochega a ** b;
+    d aprochega c - 1;
+    trovar[d] {
+        bagual 1:
+            bah['a'];
+        bagual 2:
+            bah['b'];
+        bagual 3:
+            e aprochega a * b;
+            f aprochega e ** e;
+            quebra([e] em cima do laço [f]) {
+                bah['c'];
+            } molas {
+                bah['d'];
+            }
+        bagual 4:
+            tche(f);
+    }
+    tche(d);
+    
+} os butia do bolso ()
+

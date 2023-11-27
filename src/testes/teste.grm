@@ -1,0 +1,29 @@
+me_caiu
+	bagulhetes a,b,c,d,e,f;
+	a aprochega 1;
+	b aprochega 2;
+
+	inicio_quebra ([a] bucha [b])
+		bah["a"]
+	molas
+		bah["b"]
+	fim_quebra;
+
+	tche(c);
+
+	inicio_peleia c aprochega 1 ate_levar 5 tunda
+		d aprochega c ** c;
+		inicio_quebra ([d] bem_capaz [b])
+			f aprochega d
+		molas
+			f aprochega d * e
+		fim_quebra
+	fim_peleia;
+
+	inicio_trovar [d]
+		bagual 1:
+			bah["f"].
+		bagual 2:
+			bah["d"]
+	fim_trovar
+os_butia_do_bolso

@@ -1,0 +1,292 @@
+Tokens reconhecidos: 
+
+T_ME_CAIU ( ME_CAIU )
+T_BAGULHETES ( BAGULHETES )
+T_ID ( A )
+T_VIRGULA ( , )
+T_ID ( B )
+T_VIRGULA ( , )
+T_ID ( C )
+T_VIRGULA ( , )
+T_ID ( D )
+T_VIRGULA ( , )
+T_ID ( E )
+T_VIRGULA ( , )
+T_ID ( F )
+T_PONTO_VIRGULA ( ; )
+T_ID ( A )
+T_APROCHEGA ( APROCHEGA )
+T_NUMERO ( 1 )
+T_PONTO_VIRGULA ( ; )
+T_ID ( B )
+T_APROCHEGA ( APROCHEGA )
+T_NUMERO ( 2 )
+T_PONTO_VIRGULA ( ; )
+T_INICIO_QUEBRA ( INICIO_QUEBRA )
+T_ABRE_PAR ( ( )
+T_ABRE_COL ( [ )
+T_ID ( A )
+T_FECHA_COL ( ] )
+T_BUCHA ( BUCHA )
+T_ABRE_COL ( [ )
+T_ID ( B )
+T_FECHA_COL ( ] )
+T_FECHA_PAR ( ) )
+T_BAH ( BAH )
+T_ABRE_COL ( [ )
+T_ASPAS_DUPLAS ( " )
+T_ID ( A )
+T_ASPAS_DUPLAS ( " )
+T_FECHA_COL ( ] )
+T_MOLAS ( MOLAS )
+T_BAH ( BAH )
+T_ABRE_COL ( [ )
+T_ASPAS_DUPLAS ( " )
+T_ID ( B )
+T_ASPAS_DUPLAS ( " )
+T_FECHA_COL ( ] )
+T_FIM_QUEBRA ( FIM_QUEBRA )
+T_PONTO_VIRGULA ( ; )
+T_TCHE ( TCHE )
+T_ABRE_PAR ( ( )
+T_ID ( C )
+T_FECHA_PAR ( ) )
+T_PONTO_VIRGULA ( ; )
+T_INICIO_PELEIA ( INICIO_PELEIA )
+T_ID ( C )
+T_APROCHEGA ( APROCHEGA )
+T_NUMERO ( 1 )
+T_ATE_LEVAR ( ATE_LEVAR )
+T_NUMERO ( 5 )
+T_TUNDA ( TUNDA )
+T_ID ( D )
+T_APROCHEGA ( APROCHEGA )
+T_ID ( C )
+T_ELEVADO ( ** )
+T_ID ( C )
+T_PONTO_VIRGULA ( ; )
+T_INICIO_QUEBRA ( INICIO_QUEBRA )
+T_ABRE_PAR ( ( )
+T_ABRE_COL ( [ )
+T_ID ( D )
+T_FECHA_COL ( ] )
+T_BEM_CAPAZ ( BEM_CAPAZ )
+T_ABRE_COL ( [ )
+T_ID ( B )
+T_FECHA_COL ( ] )
+T_FECHA_PAR ( ) )
+T_ID ( F )
+T_APROCHEGA ( APROCHEGA )
+T_ID ( D )
+T_MOLAS ( MOLAS )
+T_ID ( F )
+T_APROCHEGA ( APROCHEGA )
+T_ID ( D )
+T_VEZES ( * )
+T_ID ( E )
+T_FIM_QUEBRA ( FIM_QUEBRA )
+T_FIM_PELEIA ( FIM_PELEIA )
+T_PONTO_VIRGULA ( ; )
+T_INICIO_TROVAR ( INICIO_TROVAR )
+T_ABRE_COL ( [ )
+T_ID ( D )
+T_FECHA_COL ( ] )
+T_BAGUAL ( BAGUAL )
+T_NUMERO ( 1 )
+T_DOIS_PONTOS ( : )
+T_BAH ( BAH )
+T_ABRE_COL ( [ )
+T_ASPAS_DUPLAS ( " )
+T_ID ( F )
+T_ASPAS_DUPLAS ( " )
+T_FECHA_COL ( ] )
+N/A ( . )
+T_BAGUAL ( BAGUAL )
+T_NUMERO ( 2 )
+T_DOIS_PONTOS ( : )
+T_BAH ( BAH )
+T_ABRE_COL ( [ )
+T_ASPAS_DUPLAS ( " )
+T_ID ( D )
+T_ASPAS_DUPLAS ( " )
+T_FECHA_COL ( ] )
+T_FIM_TROVAR ( FIM_TROVAR )
+T_OS_BUTIA_DO_BOLSO ( OS_BUTIA_DO_BOLSO )
+T_FIM_FONTE (  )
+
+
+Regras reconhecidas: 
+
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<VARS> ::= <VAR> , <VARS> | <VAR>
+<LISTA_VARIAVEIS> ::= 'BAGULHETES' , <VARS> ';'
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VARIAVEL> ::= <ID>
+<X> ::= [0-9]+('.'[0-9]+)
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VARIAVEL> ::= <ID>
+<X> ::= [0-9]+('.'[0-9]+)
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<CONDICAO> ::= '[' <EXP> ']' 'BUCHA' '[' <EXP> ']'
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_ESCREVER> ::= 'BAH' '[' '' <EXP> '' ']'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_ESCREVER> ::= 'BAH' '[' '' <EXP> '' ']'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
+<FUNCAO_IF> ::= 'INICIO_QUEBRA' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'FIM_QUEBRA'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VARIAVEL> ::= <ID>
+<FUNCAO_LER> ::= 'TCHE' '(' <VAR> ')'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VARIAVEL> ::= <ID>
+<X> ::= [0-9]+('.'[0-9]+)
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<X> ::= [0-9]+('.'[0-9]+)
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VARIAVEL> ::= <ID>
+<X> ::= <VAR>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<CONDICAO> ::= '[' <EXP> ']' 'BEM_CAPAZ' '[' <EXP> ']'
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VARIAVEL> ::= <ID>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VARIAVEL> ::= <ID>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
+<FUNCAO_IF> ::= 'INICIO_QUEBRA' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'FIM_QUEBRA'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
+<FUNCAO_PARA> ::= 'INICIO_PELEIA' <VAR> 'APROCHEGA' <EXP> 'ATE_LEVAR' <EXP> 'TUNDA' <LISTA_FUNCOES> 'FIM_PELEIA'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<X> ::= [0-9]+('.'[0-9]+)
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_ESCREVER> ::= 'BAH' '[' '' <EXP> '' ']'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
+<CASO> ::= 'BAGUAL' <EXP> ':' <LISTA_FUNCOES>
+<X> ::= [0-9]+('.'[0-9]+)
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<X> ::= <VAR>
+<F> ::= -<X> | <X> ** <F> | <X>
+<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
+<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
+<FUNCAO_ESCREVER> ::= 'BAH' '[' '' <EXP> '' ']'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
+<CASO> ::= 'BAGUAL' <EXP> ':' <LISTA_FUNCOES>
+<CASOS> ::= <CASOS> '.' <CASOS> | <CASO>
+<FUNCAO_ESCOLHA> ::= 'INICIO_TROVAR' '[' <EXP> ']' <CASOS> 'FIM_TROVAR'
+<FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
+<LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
+<G> ::= 'ME_CAIU' <LISTA_VARIAVEIS> <LISTA_METODOS> 'OS_BUTIA_DO_BOLSO'
+<G>
+
+meCaiu {
+    a aprochega 1;
+    b aprochega 2;
+    quebra([a] bucha [b]) {
+        bah['a'];
+    } molas {
+        bah['b'];
+    }
+    tche(c);
+    peleia(c aprochega 1 ate levar 5 tunda) {
+        d aprochega c ** c;
+        quebra([d] bem capaz [b]) {
+            f aprochega d;
+        } molas {
+            f aprochega d * e;
+        }
+    }
+    trovar[d] {
+        bagual 1:
+            bah['f'];
+        bagual 2:
+            bah['d'];
+    }
+    
+} os butia do bolso ()
+

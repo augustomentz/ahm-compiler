@@ -7,6 +7,10 @@ T_VIRGULA ( , )
 T_ID ( B )
 T_VIRGULA ( , )
 T_ID ( C )
+T_VIRGULA ( , )
+T_ID ( E )
+T_VIRGULA ( , )
+T_ID ( F )
 T_PONTO_VIRGULA ( ; )
 T_ID ( A )
 T_APROCHEGA ( APROCHEGA )
@@ -65,10 +69,14 @@ Regras reconhecidas:
 <VAR> ::= <ID>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
 <VAR> ::= <ID>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
+<id> ::= [A-Z]+([A-Z]_[0-9])*
+<VAR> ::= <ID>
 <VARS> ::= <VAR> , <VARS> | <VAR>
 <LISTA_VARIAVEIS> ::= 'BAGULHETES' , <VARS> ';'
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= [0-9]+('.'[0-9]+)
 <F> ::= -<X> | <X> ** <F> | <X>
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
@@ -76,7 +84,7 @@ Regras reconhecidas:
 <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= [0-9]+('.'[0-9]+)
 <F> ::= -<X> | <X> ** <F> | <X>
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
@@ -84,7 +92,7 @@ Regras reconhecidas:
 <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= [0-9]+('.'[0-9]+)
 <F> ::= -<X> | <X> ** <F> | <X>
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
@@ -94,7 +102,7 @@ Regras reconhecidas:
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
 <EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <FUNCAO_LER> ::= 'TCHE' '(' <VAR> ')'
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <X> ::= <VAR>
@@ -128,3 +136,18 @@ Regras reconhecidas:
 <LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
 <G> ::= 'ME_CAIU' <LISTA_VARIAVEIS> <LISTA_METODOS> 'OS_BUTIA_DO_BOLSO'
 <G>
+
+meCaiu {
+    a aprochega 1;
+    b aprochega 5;
+    peleia(a aprochega 1 ate levar 5 tunda) {
+        tche(a);
+        quebra([e] bucha [f]) {
+            bah['1'];
+        } molas {
+            bah['0'];
+        }
+    }
+    
+} os butia do bolso ()
+

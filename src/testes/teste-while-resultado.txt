@@ -36,8 +36,7 @@ T_ID ( C )
 T_APROCHEGA ( APROCHEGA )
 T_ID ( A )
 T_PONTO_VIRGULA ( ; )
-T_BAITA ( BAITA )
-T_ID ( TRIPLICA )
+T_TCHE ( TCHE )
 T_ABRE_PAR ( ( )
 T_ID ( C )
 T_FECHA_PAR ( ) )
@@ -57,7 +56,7 @@ Regras reconhecidas:
 <VARS> ::= <VAR> , <VARS> | <VAR>
 <LISTA_VARIAVEIS> ::= 'BAGULHETES' , <VARS> ';'
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= [0-9]+('.'[0-9]+)
 <F> ::= -<X> | <X> ** <F> | <X>
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
@@ -65,7 +64,7 @@ Regras reconhecidas:
 <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= [0-9]+('.'[0-9]+)
 <F> ::= -<X> | <X> ** <F> | <X>
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
@@ -82,7 +81,7 @@ Regras reconhecidas:
 <EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
 <CONDICAO> ::= '[' <EXP> ']' 'BUCHA' '[' <EXP> ']'
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= <VAR>
 <F> ::= -<X> | <X> ** <F> | <X>
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
@@ -93,7 +92,7 @@ Regras reconhecidas:
 <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<VAR> ::= <ID>
+<VARIAVEL> ::= <ID>
 <X> ::= <VAR>
 <F> ::= -<X> | <X> ** <F> | <X>
 <T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
@@ -101,12 +100,8 @@ Regras reconhecidas:
 <FUNCAO_RECEBER> ::= <VAR> 'APROCHEGA' <EXP>
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <id> ::= [A-Z]+([A-Z]_[0-9])*
-<X> ::= <VAR>
-<F> ::= -<X> | <X> ** <F> | <X>
-<T> ::= <T> * <F> | <T> / <F> | <T> % <F> | <F>
-<EXP> ::= <EXP> + <T> | <EXP> - <T> | <T>
-<PARAMETROS> ::= <E> | <PARAMETROS> ::= <E> ',' <E>
-<FUNCAO_EXECUTA_FUNCAO> ::= 'BAITA' <ID> '(' <PARAMETROS> ')'
+<VARIAVEL> ::= <ID>
+<FUNCAO_LER> ::= 'TCHE' '(' <VAR> ')'
 <FUNCAO> ::= <FUNCAO_RECEBER> | <FUNCAO_ESCREVER> | <FUNCAO_LER> | <FUNCAO_IF> | <FUNCAO_ATE> | <FUNCAO_EXECUTA_FUNCAO>
 <LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
 <FUNCAO_ATE> ::= 'TRAMPA_ATE' '(' <CONDICAO> ')' <LISTA_FUNCAO> 'FIM_TRAMPA_ATE'
@@ -114,3 +109,14 @@ Regras reconhecidas:
 <LISTA_FUNCOES> ::= <FUNCAO> ; <LISTA_FUNCOES> | <FUNCAO>
 <G> ::= 'ME_CAIU' <LISTA_VARIAVEIS> <LISTA_METODOS> 'OS_BUTIA_DO_BOLSO'
 <G>
+
+meCaiu {
+    a aprochega 1;
+    b aprochega 10;
+    trampa ate([a] bucha [b]) {
+        a aprochega a + 1;
+        c aprochega a;
+        tche(c);
+    }    
+} os butia do bolso ()
+

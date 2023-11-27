@@ -7,20 +7,20 @@ me_caiu
 
 	inicio_trovar [d]
 		bagual 1:
-			bah["UM"].
+			bah["a"].
 		bagual 2:
-			bah["DOIS"].
+			bah["b"].
 		bagual 3:
-			e aprochega e * c;
+ 			e aprochega a * b;
 			f aprochega e ** e;
-			
+
 			inicio_quebra ([e] em_cima_do_laco [f])
-				bah["maior"]
+				bah["c"]
 			molas
-				bah["menor"]
+				bah["d"]
 			fim_quebra.
 		bagual 4:
 			tche(f)
 	fim_trovar;
-	tche(f)
+	tche(d)
 os_butia_do_bolso
