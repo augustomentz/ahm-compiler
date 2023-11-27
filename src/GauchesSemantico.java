@@ -1058,6 +1058,7 @@ public class GauchesSemantico {
             case T_ASPAS_DUPLAS        : tokenLexema.append( "T_ASPAS_DUPLAS" ); break;
             case T_NULO            : tokenLexema.append( "T_NULO" ); break;
             case T_ERRO_LEX        : tokenLexema.append( "T_ERRO_LEX" ); break;
+            case T_PONTO           : tokenLexema.append( "T_PONTO" ); break;
             default                : tokenLexema.append( "N/A" ); break;
         }
         System.out.println( tokenLexema.toString() + " ( " + lexema + " )" );
